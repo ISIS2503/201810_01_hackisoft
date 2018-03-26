@@ -1,4 +1,14 @@
 #include <Keypad.h>
+//DECLARACIONES DEL POTENCIOMETRO
+
+const int NIVEL_APROPIADO = 410;
+const int SONIDO_BATERIA_BAJA = 2;
+const int FRECUENCIA_SONIDO = 30;
+int potenciometro = A2;  //pin del potenciómetro
+long lectura;          //lectura de valores del potenciómetro
+int ledBateria = A1;
+int contSonido = 0;
+int contFrecuencia = 30;
 
 //DECLARACIONES DE RGB LED
 
@@ -8,7 +18,7 @@ int bluePin = 10;
 
 //DECLARACIONES DEL SENSOR
 
-int ledPin = 14;                // choose the pin for the LED
+int ledPin = A0;//14;                // choose the pin for the LED
 int inputPin = 2;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;    
@@ -27,7 +37,9 @@ long currTime;
 //DECLARACIONES KEYPAD
 
 //Specified password
-const String KEY = "1234";
+String KEY = "1234";
+//Specified password #2
+String KEYB = "7896";
 
 //Time in milliseconds which the system is locked
 const int LOCK_TIME = 30000;
@@ -75,6 +87,7 @@ Keypad customKeypad = Keypad(makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS)
 
 //Current key variable
 String currentKey;
+//
 //Door state
 boolean open;
 //Number of current attempts
@@ -101,6 +114,9 @@ void setup() {
   
   setColor(0, 0, 255); 
   buttonState = false;
+  
+  pinMode(potenciometro, INPUT); // declaracion de la variable del potenciómetro
+  pinMode(ledBateria,OUTPUT);
 }
 
 void loop() {
@@ -131,21 +147,22 @@ void loop() {
   } 
   
   if(!block) {
-    
-    //Selected key parsed;
     customKey = customKeypad.getKey();
+    
   } else if (block) {
     Serial.println("Number of attempts exceeded");
     setColor(255, 0, 0); // Color rojo por estar bloqueado
     while(true);
   }
-  
-  
 
   //Verification of input and appended value
   if (customKey) {  
+    
     currentKey+=String(customKey);
-    Serial.println(currentKey);
+    //Serial.println(currentKey);
+    setColor(0, 255, 255); // Color amarillo por oprimir tecla
+    delay(100);
+    setColor(0, 0, 255); // Color azul por defecto
   }
 
   //If the current key contains '*' and door is open
@@ -160,12 +177,12 @@ void loop() {
   //If the current key contains '#' reset attempt
   if(currentKey.endsWith("#")&&currentKey.length()<=KEY.length()) {
     currentKey = "";
-    Serial.println("Attempt deleted");
+    //Serial.println("Attempt deleted");
   }
 
   //If current key matches the key length
   if (currentKey.length()== KEY.length()) {
-    if(currentKey == KEY) {
+    if(currentKey == KEY|| currentKey==KEYB) {
       digitalWrite(10,HIGH);
       open = true;
       Serial.println("Door opened!!");
@@ -213,10 +230,34 @@ void loop() {
     digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH){
       // we have just turned of
-      Serial.println("Motion ended!");
+      //Serial.println("Motion ended!");
       // We only want to print on the output change, not state
       pirState = LOW;
     }
+  }
+
+  lectura = analogRead(potenciometro);
+  Serial.println("Valores potenciometro: " + String(lectura));
+
+  if (lectura < NIVEL_APROPIADO){
+    digitalWrite(ledBateria, HIGH);  // turn LED ON 
+    
+    if (contSonido < SONIDO_BATERIA_BAJA && contFrecuencia == 30){
+      setColor(255, 0, 0); // Color rojo por estar con batería baja
+      contSonido++;
+      Serial.println("Low battery");
+    } else if (contSonido >= SONIDO_BATERIA_BAJA) {
+      setColor(0, 0, 255); // Color azul por defecto
+      contSonido = 0;
+      contFrecuencia = 0;
+    } else {
+      contFrecuencia++;
+    }
+  } else {
+    setColor(0, 0, 255); // Color azul por defecto
+    digitalWrite(ledBateria, LOW); // turn LED OFF
+    contSonido = 0;
+    contFrecuencia = 30;
   }
   
   delay(100);
@@ -227,4 +268,5 @@ void setColor(int redValue, int greenValue, int blueValue) {
   analogWrite(greenPin, greenValue);
   analogWrite(bluePin, blueValue);
 }
+
 
