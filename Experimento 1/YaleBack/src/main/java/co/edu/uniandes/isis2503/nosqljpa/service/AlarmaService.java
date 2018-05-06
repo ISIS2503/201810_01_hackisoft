@@ -86,6 +86,20 @@ public class AlarmaService {
     public List<AlarmaDTO> all() {
         return alarmaLogic.all();
     }
+    
+    // @GET
+    //@Path("/{id}/admin")
+    //public List<AlarmaDTO> findByAdminId(@PathParam("id")String id)
+    //{
+    //    return alarmaLogic.findByAdminId(id);
+    //}
+    
+    //@GET
+    //@Path("/{id}/propietrario")
+    //public List<AlarmaDTO> findByPropietarioId(@PathParam("id")String id)
+    //{
+    //    return alarmaLogic.findByPropietarioId(id);
+    //}
 
     @DELETE
     @Path("/{id}")
