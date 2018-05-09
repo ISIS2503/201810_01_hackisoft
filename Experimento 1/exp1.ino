@@ -3,17 +3,29 @@
 //Entrega3 test_security_EEPROM_arduino.ino
 #include <EEPROM.h>
 
+//DECLARACIONES PARA HORARIOS
+int horarios_inicio[20];
+int horarios_fin[20];
+int horaActual = -1;
+
 //DECLARACIONES PARA LA COMUNICACIÓN SERIAL
+String ALARMA = "ALARMA";
 #define SIZE_BUFFER_DATA       50
 boolean stringComplete = false;
 String inputString = "";
 char bufferData [SIZE_BUFFER_DATA];
+int cl[20];
+
+//DECLARACIONES PARA EL HEALTCHECK
+#define HEALTCHECK  "HEALTCHECK"
+#define FRECUENCIA_MUESTREO   30
+int intervalo_muestreo = 0;
 
 //DECLARACIONES DEL POTENCIOMETRO
 
 const int NIVEL_APROPIADO = 410;
-const int SONIDO_BATERIA_BAJA = 2;
-const int FRECUENCIA_SONIDO = 30;
+const int SONIDO_BATERIA_BAJA = 20;
+const int FRECUENCIA_SONIDO = 300;
 int potenciometro = A2;  //pin del potenciómetro
 long lectura;          //lectura de valores del potenciómetro
 int ledBateria = A1;
@@ -51,7 +63,6 @@ long currTime;
 //Specified password #2
 //String KEYB = "7896";
 const int TAM_CLAVE = 4;
-int indicePass = 0;
 
 //Time in milliseconds which the system is locked
 const int LOCK_TIME = 30000;
@@ -142,19 +153,19 @@ void loop() {
       setColor(0, 255, 0);
       open = true;
       attempts = 0;
-      Serial.println("Door opened!!");
+      Serial.println(ALARMA + ":Puerta abierta!!");
     }
   } else if (!block && buttonState) {
     if(digitalRead(CONTACT_PIN)) {
       if((millis()-currTime)>=30000) {
         setColor(255, 0, 0);
-        Serial.println("Door opened too much time!!");
+        Serial.println(ALARMA + ":Puerta abierta demasiado tiempo!!");
       }
     }else{
       setColor(0, 0, 255);
       open = false;
       buttonState = false;
-      Serial.println("Door closed!!");
+      Serial.println(ALARMA + ":Puerta cerrada!!");
     }
   } 
   
@@ -162,7 +173,7 @@ void loop() {
     customKey = customKeypad.getKey();
     
   } else if (block) {
-    Serial.println("Number of attempts exceeded");
+    Serial.println(ALARMA + ":Numero de intentos excedido");
     setColor(255, 0, 0); // Color rojo por estar bloqueado
     while(true);
   }
@@ -180,7 +191,7 @@ void loop() {
   //If the current key contains '*' and door is open
   if(open && currentKey.endsWith("*")) {
     open = false;
-    Serial.println("Door closed");
+    Serial.println(ALARMA + ":Puerta cerrada");
     digitalWrite(10,LOW);
     currentKey = "";
     tiempoAbierto = 0;
@@ -189,15 +200,15 @@ void loop() {
   //If the current key contains '#' reset attempt
   if(currentKey.endsWith("#")&&currentKey.length()<=TAM_CLAVE) {
     currentKey = "";
-    //Serial.println("Attempt deleted");
+    //Serial.println(ALARMA + ":Intento eliminado");
   }
 
   //If current key matches the key length
   if (currentKey.length()== TAM_CLAVE) {
-    if(compareKey(currentKey)) {
+    if(compareKey(currentKey) && estaEnHorario(currentKey.toInt())) {
       digitalWrite(10,HIGH);
       open = true;
-      Serial.println("Door opened!!");
+      Serial.println(ALARMA + ":Puerta abierta!!");
       
       if (tiempoAbierto > 30000){
         setColor(255, 0, 0); // Color rojo por estar abierta más de 30 seg
@@ -206,26 +217,27 @@ void loop() {
         tiempoAbierto += 100;
       }
       attempts = 0;
-    }
-    else {
+    } else if (!estaEnHorario(currentKey.toInt())){
+      Serial.println(ALARMA + ":Horario no permitido");
+    } else {
       attempts++;
       currentKey = "";
-      Serial.println("Number of attempts: "+String(attempts));
+      Serial.println(ALARMA + ":Numero de intentos. "+String(attempts));
       setColor(255, 0, 0); // Color rojo por intento erróneo
       delay(1000);
       setColor(0, 0, 255); // Color azul por stand-by
     }
   }else if(currentKey.length()> TAM_CLAVE){
     setColor(0, 255, 0); // Color verde por estar abierta
-    Serial.println("Door opened!!");
+    Serial.println(ALARMA + ":Puerta abierta!!");
   }
   if(attempts>=maxAttempts) {
     currentKey = "";
     attempts = 0;
-    Serial.println("System locked");
+    Serial.println(ALARMA + ":Sistema bloqueado");
     setColor(255, 0, 0); // Color rojo por estar bloqueado
     delay(LOCK_TIME);
-    Serial.println("System unlocked");
+    Serial.println(ALARMA + ":Sistema desbloqueado");
     setColor(0, 0, 255); // Color azul por defecto
   }
 
@@ -234,7 +246,7 @@ void loop() {
     digitalWrite(ledPin, HIGH);  // turn LED ON
     if (pirState == LOW) {
       // we have just turned on
-      Serial.println("Motion detected!");
+      Serial.println(ALARMA + ":Movimiento detectado!");
       // We only want to print on the output change, not state
       pirState = HIGH;
     }
@@ -242,14 +254,14 @@ void loop() {
     digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH){
       // we have just turned of
-      //Serial.println("Motion ended!");
+      //Serial.println(ALARMA + ":Movimiento terminado!");
       // We only want to print on the output change, not state
       pirState = LOW;
     }
   }
-/*
+  /*
   lectura = analogRead(potenciometro);
-  Serial.println("Valores potenciometro: " + String(lectura));
+  //Serial.println(ALARMA + ":Valores potenciometro: " + String(lectura));
 
   if (lectura < NIVEL_APROPIADO){
     digitalWrite(ledBateria, HIGH);  // turn LED ON 
@@ -257,7 +269,7 @@ void loop() {
     if (contSonido < SONIDO_BATERIA_BAJA && contFrecuencia == 30){
       setColor(255, 0, 0); // Color rojo por estar con batería baja
       contSonido++;
-      Serial.println("Low battery");
+      Serial.println(ALARMA + ":Bateria baja");
     } else if (contSonido >= SONIDO_BATERIA_BAJA) {
       setColor(0, 0, 255); // Color azul por defecto
       contSonido = 0;
@@ -272,38 +284,109 @@ void loop() {
     contFrecuencia = 30;
   }*/
 
-  if (Serial.available() > 0){
-      int bytesEntrada = Serial.read();
-      Serial.print("Recibido del servidor: ");
-      Serial.println(char(bytesEntrada));
-  }
-
   receiveData();
   processData();
+  healtcheck();
   
   delay(100);
 }
 
+void healtcheck(){
+  if (intervalo_muestreo >= FRECUENCIA_MUESTREO){
+    Serial.println(HEALTCHECK);
+    intervalo_muestreo = 0;
+  }
+
+  intervalo_muestreo++;
+}
+
 void processData() {
   if (stringComplete) {
-    String* comandos;
+    String comandos[5];
+    //Serial.println(inputString);
     processCommand(comandos, inputString);
-
+    /*Serial.println("Valor 1: " + comandos[0]);
+    Serial.println("Valor 2: " + comandos[1]);
+    Serial.println("Valor 3: " + comandos[2]);
+    Serial.println("Valor 4: " + comandos[3]);
+    Serial.println("Valor 5: " + comandos[4]);*/
     if (comandos[0] == "crear"){
-      addPassword(atoi(comandos[1]), indicePass);
-      indicePass++;
+      addPassword(comandos[2].toInt(), comandos[1].toInt());
+      adicionarHorario(comandos[3].toInt(), comandos[4].toInt(), comandos[1].toInt());
     } else if (comandos[0] == "actualizar"){
-      updatePassword(atoi(comandos[1]), indicePass);
+      updatePassword(comandos[2].toInt(), comandos[1].toInt());
+      actualizarHorario(comandos[3].toInt(), comandos[4].toInt(), comandos[1].toInt());
     } else if (comandos[0] == "eliminar"){
       if (comandos[1] == "todo"){
         deleteAllPasswords();
+        eliminarHorarios();
       } else {
-        deletePassword(atoi(comandos[1]));
+        deletePassword(comandos[1].toInt());
+        eliminarHorario(comandos[1].toInt());
       }
+    } else if (comandos[0] == "hora"){
+      horaActual = comandos[1].toInt();
     }
     
     inputString = "";
     stringComplete = false;
+  }
+}
+
+//Metodo que adiciona un horario
+void adicionarHorario(int inicio, int fin, int pos){
+  horarios_inicio[pos] = inicio;
+  horarios_fin[pos] = fin;
+}
+
+//Metodo que actualiza un horario
+void actualizarHorario(int inicio, int fin, int pos){
+  horarios_inicio[pos] = inicio;
+  horarios_fin[pos] = fin;
+}
+
+//Metodo que elimina un horario
+void eliminarHorario(int pos){
+  horarios_inicio[pos] = -1;
+  horarios_fin[pos] = -1;
+}
+
+//Metodo que elimina un horario
+void eliminarHorarios(){
+  for (int i = 0; i < 20; i++){
+    horarios_inicio[i] = -1;
+    horarios_fin[i] = -1;
+  }
+}
+
+boolean estaEnHorario(int clave){
+  int index = -1;
+  for (int i = 0; i < 20; i++){
+    if (cl[i] == clave){
+      index = i;
+      i = 20;
+    }
+  }
+  
+  return horarios_inicio[index] <= horaActual && horaActual <= horarios_fin[index];
+}
+
+// Methods that divides the command by parameters
+void processCommand(String result[], String command) {
+  int index = 0;
+  int i = 0;
+  String separador = ":";
+  index = command.indexOf(separador);
+  
+  while(index > -1){
+    result[i] = command.substring(0, index);
+    command = command.substring(index + 1);
+    index = command.indexOf(separador);
+  
+    i++;
+    if (index == -1 && command != ""){
+      result[i] = command;
+    }
   }
 }
 
@@ -332,9 +415,24 @@ boolean compareKey(String key) {
     while(codif!=0) {
       if(codif%2==1) {
         arg0 = EEPROM.read(acc);
-        arg1 = EEPROM.read(acc+1)*256;
+        arg1 = EEPROM.read(acc+1);
+        String compose = "";
+        arg1*=256;
         arg1+= arg0;
-        if(String(arg1)==key) {
+        if(sizeof(String(arg1)) == 1) {
+          compose = "000"+String(arg0);
+        }
+        else if(sizeof(String(arg1)) == 2) {
+          compose = "00"+String(arg0);
+        }
+        else if(sizeof(String(arg1))==3) {
+          compose = "0"+String(arg1);
+        }
+        else {
+          compose = String(arg1);
+        }
+
+        if(compose==key) {
           return true;
         }
       }
@@ -344,20 +442,6 @@ boolean compareKey(String key) {
     acc=(i+1)*16+3;
   }
   return false;
-}
-
-// Methods that divides the command by parameters
-void processCommand(String* result, String command) {
-  char buf[sizeof(command)];
-  String vars = "";
-  vars.toCharArray(buf, sizeof(buf));
-  char *p = buf;
-  char *str;
-  int i = 0;
-  while ((str = strtok_r(p, ";", &p)) != NULL) {
-    // delimiter is the semicolon
-    result[i++] = str;
-  }
 }
 
 //Method that adds a password in the specified index
@@ -373,6 +457,7 @@ void addPassword(int val, int index) {
   byte j = EEPROM.read(location);
   j |= i;
   EEPROM.write(location,j);
+  cl[index] = val;
 }
 
 //Method that updates a password in the specified index
@@ -381,6 +466,7 @@ void updatePassword(int val, int index) {
   byte arg1 = val/256;
   EEPROM.write((index*2)+3,arg0);
   EEPROM.write((index*2)+4,arg1);
+  cl[index] = val;
 }
 
 //Method that deletes a password in the specified index
@@ -392,6 +478,7 @@ void deletePassword(int index) {
   byte j = EEPROM.read(location);
   j ^= i;
   EEPROM.write(location,j);
+  cl[index] = -1;
 }
 
 //Method that deletes all passwords
@@ -400,6 +487,10 @@ void deleteAllPasswords() {
   EEPROM.write(0,0);
   EEPROM.write(1,0);
   EEPROM.write(2,0);
+
+  for (int i = 0; i < 20; i++){
+    cl[i] = -1;  
+  }
 }
 
 
@@ -408,4 +499,3 @@ void setColor(int redValue, int greenValue, int blueValue) {
   analogWrite(greenPin, greenValue);
   analogWrite(bluePin, blueValue);
 }
-
