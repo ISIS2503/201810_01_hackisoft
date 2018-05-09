@@ -68,5 +68,12 @@ public class BarrioEntity implements Serializable{
         this.unidadesResidenciales = unidadesResidenciales;
     }
     
-    
+    public String getId()
+    {
+        return id;
+    }   
+    public void SetId()
+    {
+        this.id=id;
+    }
 }
