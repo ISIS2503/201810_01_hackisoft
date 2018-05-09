@@ -38,13 +38,25 @@ public class PropietarioEntity implements Serializable{
     private String id;
     
     private String nombre;
+    
+    private String correo;
+    
+    private int telefono;
+    
+    private String login;
+    
+    private String contrasena;
 
     public PropietarioEntity() {
     }
 
-    public PropietarioEntity(String id, String nombre) {
+    public PropietarioEntity(String id, String nombre, String correo, int telefono, String login, String contrasena) {
         this.id = id;
         this.nombre = nombre;
+        this.correo= correo;
+        this.telefono= telefono;
+        this.login=login;
+        this.contrasena=contrasena;
     }
 
     public String getId() {
@@ -63,5 +75,42 @@ public class PropietarioEntity implements Serializable{
         this.nombre = nombre;
     }
     
+    public String getCorreo()
+    {
+      return correo;   
+    } 
+    
+    public void setCorreo()
+    {
+        this.correo=correo;
+    }
+    
+    public String getTelefono()
+    {
+     return telefono;   
+    }
+    
+    public void setTelefono()
+    {
+        this.telefono=telefono
+    }
+    
+    public String getLogin()
+    {
+        return login;
+    }
+    
+    public void setLogin()
+    {
+        this.login=login;
+    }
+    public String getContrasena()
+    {
+        return contrasena;
+    }
+    public setContrasena()
+    {
+     this.contrasena=contrasena;   
+    }
     
 }
