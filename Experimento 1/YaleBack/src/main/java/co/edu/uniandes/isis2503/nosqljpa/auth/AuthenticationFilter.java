@@ -60,6 +60,7 @@ import javax.ws.rs.ext.Provider;
 public class AuthenticationFilter implements ContainerRequestFilter {
 
     public static final String AUTHENTICATION_SCHEME = "Bearer";
+    public static String USER_ID = "";
 
     final JwkProvider provider = new UrlJwkProvider("https://isis2503-egalan.auth0.com/.well-known/jwks.json");
     final String privateKeyId = "PK";
@@ -105,6 +106,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             String issuer = "https://isis2503-egalan.auth0.com/";
             String audience;
             //Access token
+            USER_ID = JWT.decode(token).getClaim("sub").asString();
             if (!JWT.decode(token).getClaim("gty").isNull() && JWT.decode(token).getClaim("gty").asString().equals("client-credentials")) {
                 audience = "uniandes.edu.co/thermalcomfort";
             }
@@ -151,10 +153,12 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         if (!isTokenBasedAuthentication(authorizationHeader)) {
             abortWithUnauthorized(requestContext);
         }
+        
 
         // Extract the token from the Authorization header
         String token = authorizationHeader
                 .substring(AUTHENTICATION_SCHEME.length()).trim();
+        
 
         try {
 
@@ -164,5 +168,6 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         } catch (Exception e) {
             abortWithUnauthorized(requestContext);
         }
+        
     }
 }

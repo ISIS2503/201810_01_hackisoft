@@ -23,15 +23,18 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.service;
 
+import co.edu.uniandes.isis2503.nosqljpa.auth.AuthorizationFilter.Role;
+import co.edu.uniandes.isis2503.nosqljpa.auth.AuthenticationFilter;
 import co.edu.uniandes.isis2503.nosqljpa.auth.Secured;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IAdminLogic;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IResidenciaLogic;
 import co.edu.uniandes.isis2503.nosqljpa.logic.AdminLogic;
-import co.edu.uniandes.isis2503.nosqljpa.logic.UnidadResidencialLogic;
+import co.edu.uniandes.isis2503.nosqljpa.logic.ResidenciaLogic;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.AdminDTO;
-import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.UnidadResidencialDTO;
-import com.sun.istack.logging.Logger;
+import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.ResidenciaDTO;
+import java.util.logging.Logger;
 import java.util.List;
 import java.util.logging.Level;
-import javax.management.relation.Role;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -44,71 +47,86 @@ import javax.ws.rs.core.Response;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-@Path("/administradores")
-@Secured
+@Path("/admins")
+//@Secured({Role.admin, Role.yale})
 @Produces(MediaType.APPLICATION_JSON)
-
-
 public class AdminService {
-    private final AdminLogic adminlogic;
-    private final UnidadResidencialLogic residenciaLogic;
+
+    private final IAdminLogic adminLogic;
+    private final IResidenciaLogic residenciaLogic;
 
     public AdminService() {
-        this.adminlogic = new AdminLogic();
-        this.residenciaLogic = new UnidadResidencialLogic();
+        this.adminLogic = new AdminLogic();
+        this.residenciaLogic = new ResidenciaLogic();
     }
-    
+
     @POST
-    public AdminDTO add(AdminDTO dto) 
-    {
-        return adminlogic.add(dto);
-    }
-    
-    @POST
-    @Path("{id}/unidadresidencial")
-    public UnidadResidencialDTO addUnidad(@PathParam("id")String id, UnidadResidencialDTO dto)
-    {
-        AdminDTO admin= adminlogic.find(id);
-        UnidadResidencialDTO result= residenciaLogic.add(dto);
-        admin.setConjunto(dto.getId());
-        adminlogic.update(admin);
-        return result;
-    }
-    
-    @PUT
-    public AdminDTO update(AdminDTO dto)
-    {
-        return adminlogic.update(dto);
-    }
-    
-    @GET
-    @Path("/{id}")
-    public AdminDTO find (@PathParam("id")String id)
-    {
-       return adminlogic.find(id);
-    }
-    @GET
-    public List<AdminDTO> all()
-    {
-        return adminlogic.all();
-    }
-    
-    @DELETE
     //@Secured({Role.yale})
-    @Path("/{id}")
+    public AdminDTO add(AdminDTO dto) {
+        return adminLogic.add(dto);
+    }
+
+    /**@POST
+    @Path("{code}/rooms")
+    public RoomDTO addRoom(@PathParam("code") String code, RoomDTO dto) {
+        AdminDTO alarma = alarmaLogic.findCode(code);
+        RoomDTO result = roomLogic.add(dto);
+        alarma.addRoom(dto.getId());
+        alarmaLogic.update(alarma);
+        return result;
+    }*/
     
-    public Response delete(@PathParam("id")String id)
-    {
-        try{
-            adminlogic.delete(id);
-            return Response.status(200).header("Acces-Control_Allow-Origin", "*").entity("Successsful:Floor was deleted").build();
+    
+    @POST
+    @Path("/residencia")
+    //@Secured({Role.admin})
+    public ResidenciaDTO addResidencia(ResidenciaDTO dto) {
+        AdminDTO admin = adminLogic.find(AuthenticationFilter.USER_ID);
+        ResidenciaDTO agregado = residenciaLogic.add(dto);
+        admin.addResidencia(dto);
+        adminLogic.update(admin);
+        return agregado;
+    }
+    
+    @POST
+    @Path("/{idAdmin}/residencia")
+    //@Secured({Role.yale})
+    public ResidenciaDTO addResidencia(@PathParam("idAdmin") String idAdmin, ResidenciaDTO dto) {
+        AdminDTO admin = adminLogic.find(idAdmin);
+        ResidenciaDTO agregado = residenciaLogic.add(dto);
+        admin.addResidencia(dto);
+        adminLogic.update(admin);
+        return agregado;
+    }
+
+    @PUT
+    //@Secured({Role.yale, Role.admin})
+    public AdminDTO update(AdminDTO dto) {
+        return adminLogic.update(dto);
+    }
+
+    @GET
+    @Path("/{id}")
+    public AdminDTO find(@PathParam("id") String id) {
+        return adminLogic.find(id);
+    }
+
+    @GET
+    public List<AdminDTO> all() {
+        return adminLogic.all();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response delete(@PathParam("id") String id) {
+        try {
+            adminLogic.delete(id);
+            return Response.status(200).header("Access-Control-Allow-Origin", "*").entity("Sucessful: Admin was deleted").build();
+        } catch (Exception e) {
+            Logger.getLogger(AdminService.class.getName()).log(Level.WARNING, e.getMessage());
+            return Response.status(500).header("Access-Control-Allow-Origin", "*").entity("We found errors in your query, please contact the Web Admin.").build();
         }
-        catch(Exception e)
-                {
-                    Logger.getLogger(AdminService.class).log(Level.WARNING, e.getMessage());
-                    return Response.status(500).header("Acces-Control-Allow-Origin","*").entity("we found errors in our query, pleasecontact the Web admin.").build();
-                }
     }
 }

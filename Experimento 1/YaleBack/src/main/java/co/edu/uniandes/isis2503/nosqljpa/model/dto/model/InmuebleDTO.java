@@ -32,32 +32,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class InmuebleDTO{
     private String id;
-    private String name;
-    private String code;
+    private HubDTO hub;
+    private ResidenciaDTO residencia;
 
     public InmuebleDTO() {
     }
 
-    public InmuebleDTO(String id, String name, String code) {
+    public InmuebleDTO(String id, HubDTO hub, ResidenciaDTO residencia) {
         this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-    
-    public String getCode() {
-        return code;
+        this.hub = hub;
+        this.residencia = residencia;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public HubDTO getHub() {
+        return hub;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setHub(HubDTO hub) {
+        this.hub = hub;
     }
     
     public String getId() {
@@ -66,5 +58,13 @@ public class InmuebleDTO{
     
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public ResidenciaDTO getResidencia() {
+        return residencia;
+    }
+    
+    public void setResidencia(ResidenciaDTO residencia) {
+        this.residencia = residencia;
     }
 }

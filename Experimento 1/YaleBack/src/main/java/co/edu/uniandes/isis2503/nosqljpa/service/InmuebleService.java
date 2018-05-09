@@ -46,7 +46,7 @@ import javax.ws.rs.core.Response;
  * @author e.galan10
  */
 @Path("/inmuebles")
-@Secured({Role.admin, Role.yale, Role.segPrivada, Role.propietario})
+//@Secured({Role.yale, Role.segPrivada, Role.propietario})
 @Produces(MediaType.APPLICATION_JSON)
 public class InmuebleService {
 
@@ -57,6 +57,7 @@ public class InmuebleService {
     }
 
     @POST
+    //@Secured({Role.yale})
     public InmuebleDTO add(InmuebleDTO dto) {
         return inmuebleLogic.add(dto);
     }
@@ -72,6 +73,7 @@ public class InmuebleService {
     }*/
 
     @PUT
+    //@Secured({Role.yale})
     public InmuebleDTO update(InmuebleDTO dto) {
         return inmuebleLogic.update(dto);
     }
@@ -83,12 +85,14 @@ public class InmuebleService {
     }
 
     @GET
+    //@Secured({Role.yale})
     public List<InmuebleDTO> all() {
         return inmuebleLogic.all();
     }
 
     @DELETE
     @Path("/{id}")
+    //@Secured({Role.yale})
     public Response delete(@PathParam("id") String id) {
         try {
             inmuebleLogic.delete(id);

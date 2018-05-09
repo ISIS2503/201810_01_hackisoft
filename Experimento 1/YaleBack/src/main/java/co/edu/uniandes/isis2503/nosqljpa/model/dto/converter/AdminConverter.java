@@ -23,6 +23,8 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.converter;
 
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IAdminConverter;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IResidenciaConverter;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.AdminDTO;
 import co.edu.uniandes.isis2503.nosqljpa.model.entity.AdminEntity;
 import java.util.ArrayList;
@@ -30,43 +32,55 @@ import java.util.List;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-public class AdminConverter {
-    public static AdminConverter CONVERTER= new AdminConverter();
+public class AdminConverter implements IAdminConverter {
+
+    public static IAdminConverter CONVERTER = new AdminConverter();
+    public static IResidenciaConverter residenciaCONVERTER = new ResidenciaConverter();
 
     public AdminConverter() {
     }
-    
-   public AdminDTO entityToDto(AdminEntity entity) {
-        AdminDTO dto=new AdminDTO();
+
+    @Override
+    public AdminDTO entityToDto(AdminEntity entity) {
+        AdminDTO dto = new AdminDTO();
         dto.setId(entity.getId());
-        dto.setName(entity.getNombre());
-        dto.setConjunto(entity.getConjunto());
+        dto.setResidencias(residenciaCONVERTER.listEntitiesToListDTOs(entity.getResidencias()));
+        dto.setEmail(entity.getEmail());
+        dto.setPassword(entity.getPassword());
+        dto.setPhone(entity.getPhone());
         return dto;
     }
-    
+
+    @Override
     public AdminEntity dtoToEntity(AdminDTO dto) {
-        AdminEntity entity=new AdminEntity();
+        AdminEntity entity = new AdminEntity();
         entity.setId(dto.getId());
-        entity.setNombre(dto.getName());
-        entity.setConjunto(dto.getConjunto());
+        entity.setResidencias(residenciaCONVERTER.listDTOsToListEntities(dto.getResidencias()));
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(dto.getPassword());
+        entity.setPhone(dto.getPhone());
         return entity;
     }
-    
+
+    @Override
     public List<AdminDTO> listEntitiesToListDTOs(List<AdminEntity> entities) {
         ArrayList<AdminDTO> dtos = new ArrayList<>();
-        for (AdminEntity entity : entities) {
-            dtos.add(entityToDto(entity));
-        }
+        if (entities != null)
+            for (AdminEntity entity : entities) {
+                dtos.add(entityToDto(entity));
+            }
         return dtos;
     }
 
+    @Override
     public List<AdminEntity> listDTOsToListEntities(List<AdminDTO> dtos) {
         ArrayList<AdminEntity> entities = new ArrayList<>();
-        for (AdminDTO dto : dtos) {
-            entities.add(dtoToEntity(dto));
-        }
+        if (dtos != null)
+            for (AdminDTO dto : dtos) {
+                entities.add(dtoToEntity(dto));
+            }
         return entities;
-    } 
+    }
 }

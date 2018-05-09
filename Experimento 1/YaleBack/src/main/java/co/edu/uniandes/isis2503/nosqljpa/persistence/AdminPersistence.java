@@ -27,13 +27,12 @@ import co.edu.uniandes.isis2503.nosqljpa.model.entity.AdminEntity;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-public class AdminPersistence extends Persistencer<AdminEntity,String> {
+public class AdminPersistence extends Persistencer<AdminEntity, String>{
 
-    public AdminPersistence() {
-    this.entityClass= AdminEntity.class;
+    public AdminPersistence(){
+        this.entityClass = AdminEntity.class;
     }
-    
-    
+
 }

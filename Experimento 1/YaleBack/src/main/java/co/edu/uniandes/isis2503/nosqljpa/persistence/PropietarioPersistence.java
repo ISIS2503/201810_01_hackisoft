@@ -27,13 +27,12 @@ import co.edu.uniandes.isis2503.nosqljpa.model.entity.PropietarioEntity;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
 public class PropietarioPersistence extends Persistencer<PropietarioEntity, String>{
 
-    public PropietarioPersistence() {
-        this.entityClass=PropietarioEntity.class;
+    public PropietarioPersistence(){
+        this.entityClass = PropietarioEntity.class;
     }
-    
-    
+
 }

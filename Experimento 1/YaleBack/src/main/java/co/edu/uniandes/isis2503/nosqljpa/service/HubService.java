@@ -28,6 +28,9 @@ import co.edu.uniandes.isis2503.nosqljpa.auth.Secured;
 import co.edu.uniandes.isis2503.nosqljpa.interfaces.IHubLogic;
 import co.edu.uniandes.isis2503.nosqljpa.logic.HubLogic;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.HubDTO;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IDispositivoLogic;
+import co.edu.uniandes.isis2503.nosqljpa.logic.DispositivoLogic;
+import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.DispositivoDTO;
 import java.util.logging.Logger;
 import java.util.List;
 import java.util.logging.Level;
@@ -46,14 +49,16 @@ import javax.ws.rs.core.Response;
  * @author e.galan10
  */
 @Path("/hubs")
-@Secured({Role.yale})
+//@Secured({Role.yale})
 @Produces(MediaType.APPLICATION_JSON)
 public class HubService {
 
     private final IHubLogic hubLogic;
+    private final IDispositivoLogic dispositivoLogic;
 
     public HubService() {
         this.hubLogic = new HubLogic();
+        this.dispositivoLogic = new DispositivoLogic();
     }
 
     @POST
@@ -80,6 +85,17 @@ public class HubService {
     @Path("/{id}")
     public HubDTO find(@PathParam("id") String id) {
         return hubLogic.find(id);
+    }
+    
+    @POST
+    @Path("/{idHub}/dispositivo")
+    //@Secured({Role.yale})
+    public DispositivoDTO addDispositivo(@PathParam("idHub") String idHub, DispositivoDTO dto) {
+        HubDTO hub = hubLogic.find(idHub);
+        DispositivoDTO agregado = dispositivoLogic.add(dto);
+        hub.addDispositivo(dto);
+        hubLogic.update(hub);
+        return agregado;
     }
 
     @GET

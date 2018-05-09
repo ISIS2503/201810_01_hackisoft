@@ -24,29 +24,32 @@
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.*;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
 @XmlRootElement
 public class AdminDTO {
-    
     private String id;
-    
-    private String name;
-    
-    private String conjunto;
+    private List<ResidenciaDTO> residencias;
+    private String email;
+    private String password;
+    private String phone;
 
     public AdminDTO() {
     }
 
-    public AdminDTO(String id, String name, String conjunto) {
+    public AdminDTO(String id, String email, String password, String phone) {
         this.id = id;
-        this.name = name;
-        this.conjunto = conjunto;
-    }
+        this.residencias = new ArrayList<>();
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
 
+    }
+    
     public String getId() {
         return id;
     }
@@ -54,23 +57,50 @@ public class AdminDTO {
     public void setId(String id) {
         this.id = id;
     }
-
-    public String getConjunto() {
-        return conjunto;
+    
+    public String getEmail() {
+        return email;
     }
 
-    public void setConjunto(String conjunto) {
-        this.conjunto = conjunto;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
     }
     
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
     
+    public void setResidencias(List<ResidenciaDTO> residencias) {
+        this.residencias = residencias;
+    }
+    
+    public List<ResidenciaDTO> getResidencias() {
+        return residencias;
+    }
+    
+    public void addResidencia(ResidenciaDTO residencia) {
+        residencias.add(residencia);
+    }
+    
+    public ResidenciaDTO deleteResidencia(String id) {
+        for (ResidenciaDTO residencia : residencias) {
+            if(residencia.getId().equals(id)){
+                residencias.remove(residencia);
+                return residencia;
+            }
+        }
+        return null;
+    }
 }

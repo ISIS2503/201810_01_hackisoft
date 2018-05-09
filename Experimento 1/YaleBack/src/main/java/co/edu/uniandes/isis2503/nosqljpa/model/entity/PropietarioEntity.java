@@ -24,39 +24,48 @@
 package co.edu.uniandes.isis2503.nosqljpa.model.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.OneToMany;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
 @Entity
+@Table(name = "PROPIETARIOS")
 public class PropietarioEntity implements Serializable{
-    
+
     @Id
     private String id;
     
-    private String nombre;
-    
-    private String correo;
-    
-    private int telefono;
-    
-    private String login;
-    
-    private String contrasena;
+    @OneToMany
+    private List<InmuebleEntity> inmuebles;
+    private String email;
+    private String password;
+    private String phone;
 
     public PropietarioEntity() {
     }
 
-    public PropietarioEntity(String id, String nombre, String correo, int telefono, String login, String contrasena) {
+    public PropietarioEntity(String id, String email, String password, String phone) {
         this.id = id;
-        this.nombre = nombre;
-        this.correo= correo;
-        this.telefono= telefono;
-        this.login=login;
-        this.contrasena=contrasena;
+        inmuebles = new ArrayList<>();
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
+    
+    public List<InmuebleEntity> getInmuebles() {
+        return inmuebles;
+    }
+
+    public void setInmuebles(List<InmuebleEntity> inmuebles) {
+        this.inmuebles = inmuebles;
     }
 
     public String getId() {
@@ -66,51 +75,42 @@ public class PropietarioEntity implements Serializable{
     public void setId(String id) {
         this.id = id;
     }
+    
+    public String getEmail() {
+        return email;
+    }
 
-    public String getNombre() {
-        return nombre;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getPassword() {
+        return password;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setPassword(String password) {
+        this.password = password;
     }
     
-    public String getCorreo()
-    {
-      return correo;   
-    } 
-    
-    public void setCorreo()
-    {
-        this.correo=correo;
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
     
-    public String getTelefono()
-    {
-     return telefono;   
+    public void addInmueble(InmuebleEntity inmueble) {
+        inmuebles.add(inmueble);
     }
     
-    public void setTelefono()
-    {
-        this.telefono=telefono
+    public InmuebleEntity deleteInmueble(String id) {
+        for (InmuebleEntity inmueble : inmuebles) {
+            if(inmueble.getId().equals(id)){
+                inmuebles.remove(inmueble);
+                return inmueble;
+            }
+        }
+        return null;
     }
-    
-    public String getLogin()
-    {
-        return login;
-    }
-    
-    public void setLogin()
-    {
-        this.login=login;
-    }
-    public String getContrasena()
-    {
-        return contrasena;
-    }
-    public setContrasena()
-    {
-     this.contrasena=contrasena;   
-    }
-    
 }

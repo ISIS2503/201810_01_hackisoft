@@ -25,6 +25,7 @@ package co.edu.uniandes.isis2503.nosqljpa.logic;
 
 import co.edu.uniandes.isis2503.nosqljpa.interfaces.IInmuebleLogic;
 import static co.edu.uniandes.isis2503.nosqljpa.model.dto.converter.InmuebleConverter.CONVERTER;
+import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.AlarmaDTO;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.InmuebleDTO;
 import co.edu.uniandes.isis2503.nosqljpa.persistence.InmueblePersistence;
 import java.util.List;

@@ -23,10 +23,13 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.service;
 
+import co.edu.uniandes.isis2503.nosqljpa.auth.AuthorizationFilter.Role;
+import co.edu.uniandes.isis2503.nosqljpa.auth.AuthenticationFilter;
+import co.edu.uniandes.isis2503.nosqljpa.auth.Secured;
 import co.edu.uniandes.isis2503.nosqljpa.interfaces.IBarrioLogic;
 import co.edu.uniandes.isis2503.nosqljpa.logic.BarrioLogic;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.BarrioDTO;
-import com.sun.istack.logging.Logger;
+import java.util.logging.Logger;
 import java.util.List;
 import java.util.logging.Level;
 import javax.ws.rs.DELETE;
@@ -44,6 +47,7 @@ import javax.ws.rs.core.Response;
  * @author da.cortes11
  */
 @Path("/Barrio")
+//@Secured({Role.yale})
 @Produces(MediaType.APPLICATION_JSON)
 
 public class BarrioService {
@@ -91,7 +95,7 @@ public class BarrioService {
             barrioLogic.delete(id);
             return Response.status(200).header("Access-Control-Allow-Origin", "*").entity("Sucessful: Barrio was deleted").build();
         } catch (Exception e) {
-            Logger.getLogger(BarrioService.class).log(Level.WARNING, e.getMessage());
+            Logger.getLogger(BarrioService.class.getName()).log(Level.WARNING, e.getMessage());
             return Response.status(500).header("Access-Control-Allow-Origin", "*").entity("We found errors in your query, please contact the Web Admin.").build();
         }
     }

@@ -24,6 +24,7 @@
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.*;
 
 /**
  *
@@ -32,40 +33,42 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class HubDTO{
     private String id;
-    private String name;
-    private String code;
+    private List<DispositivoDTO> dispositivos;
 
     public HubDTO() {
     }
 
-    public HubDTO(String id, String name, String code) {
+    public HubDTO(String id) {
         this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+        this.dispositivos = new ArrayList<>();
     }
     
-    public String getName() {
-        return name;
+    public List<DispositivoDTO> getDispositivos() {
+        return dispositivos;
     }
-
     
-    public void setName(String name) {
-        this.name = name;
+    public void setDispositivos(List<DispositivoDTO> dispositivos) {
+        this.dispositivos = dispositivos;
+    }
+    
+    public void addDispositivo(DispositivoDTO dispositivo) {
+        this.dispositivos.add(dispositivo);
+    }
+    
+    public DispositivoDTO deleteDispositivo(String id){
+        for (DispositivoDTO dispositivo : dispositivos) {
+            if(dispositivo.getId().equals(id)){
+                dispositivos.remove(dispositivo);
+                return dispositivo;
+            }
+        }
+        return null;
     }
     
     
     public String getId() {
         return id;
     }
-
     
     public void setId(String id) {
         this.id = id;

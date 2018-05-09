@@ -72,7 +72,7 @@ public class BarrioEntity implements Serializable{
     {
         return id;
     }   
-    public void SetId()
+    public void setId(String id)
     {
         this.id=id;
     }

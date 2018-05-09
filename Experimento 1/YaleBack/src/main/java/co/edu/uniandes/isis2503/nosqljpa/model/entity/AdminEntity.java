@@ -24,49 +24,91 @@
 package co.edu.uniandes.isis2503.nosqljpa.model.entity;
 
 import java.io.Serializable;
+import java.util.*;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
 @Entity
+@Table(name = "ADMINS")
 public class AdminEntity implements Serializable{
+
     @Id
-    
     private String id;
     
-    private String nombre;
-    
-    private String conjunto;
+    @OneToMany
+    private List<ResidenciaEntity> residencias;
+    private String email;
+    private String password;
+    private String phone;
 
     public AdminEntity() {
+    }
+
+    public AdminEntity(String id, String email, String password, String phone) {
+        this.id = id;
+        this.residencias = new ArrayList<>();
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
+    
+    public List<ResidenciaEntity> getResidencias() {
+        return residencias;
+    }
+
+    public void setResidencias(List<ResidenciaEntity> residencias) {
+        this.residencias = residencias;
     }
 
     public String getId() {
         return id;
     }
-
-    public void setConjunto(String conjunto) {
-        this.conjunto = conjunto;
+    
+    public String getEmail() {
+        return email;
     }
 
-    public String getConjunto() {
-        return conjunto;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public void setId(String id) {
         this.id = id;
     }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    
+    public void addResidencia(ResidenciaEntity residencia) {
+        residencias.add(residencia);
     }
     
-    
+    public ResidenciaEntity deleteResidencia(String id) {
+        for (ResidenciaEntity residencia : residencias) {
+            if(residencia.getId().equals(id)){
+                residencias.remove(residencia);
+                return residencia;
+            }
+        }
+        return null;
+    }
 }

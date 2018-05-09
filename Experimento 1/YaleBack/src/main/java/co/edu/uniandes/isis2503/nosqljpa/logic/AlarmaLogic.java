@@ -43,10 +43,10 @@ public class AlarmaLogic implements IAlarmaLogic{
 
     @Override
     public AlarmaDTO add(AlarmaDTO dto) {
-         if(dto.getId()==null){
-            dto.setId(UUID.randomUUID().toString());
-         }
-         //if(dto.getFecha()==null)
+        if(dto.getId()==null){
+           dto.setId(UUID.randomUUID().toString());
+        }
+        dto.setFecha(new java.util.Date());
         AlarmaDTO result = CONVERTER.entityToDto(persistence.add(CONVERTER.dtoToEntity(dto)));
         return result;
     }
@@ -60,16 +60,6 @@ public class AlarmaLogic implements IAlarmaLogic{
     @Override
     public AlarmaDTO find(String id) {
         return CONVERTER.entityToDto(persistence.find(id));
-    }
-    
-    public List<AlarmaDTO> findByAdiministrador(String id)
-    {
-        return CONVERTER.listEntitiesToListDTOs(persistence.findByAdminId(id));
-    }
-    
-    public List<AlarmaDTO> findByPropietario(String id)
-    {
-        return CONVERTER.listEntitiesToListDTOs(persistence.findByPropietarioId(id));
     }
     
     @Override

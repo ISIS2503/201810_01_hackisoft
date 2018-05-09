@@ -23,6 +23,7 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.model;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,39 +33,58 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class AlarmaDTO {
     private String id;
-    private String name;
-    private String code;
+    private String message;
+    private ResidenciaDTO residencia;
+    private InmuebleDTO inmueble;
+    private Date fecha;
 
     public AlarmaDTO() {
     }
 
-    public AlarmaDTO(String id, String name, String code) {
+    public AlarmaDTO(String message, ResidenciaDTO residencia, InmuebleDTO inmueble) {
+        this.residencia = residencia;
+        this.message = message;
+        this.inmueble = inmueble;
+
+    }
+    
+    public ResidenciaDTO getResidencia() {
+        return residencia;
+    }
+
+    public void setResidencia(ResidenciaDTO residencia) {
+        this.residencia = residencia;
+    }
+    
+    public void setInmueble(InmuebleDTO inmueble) {
+        this.inmueble = inmueble;
+    }
+    
+    public InmuebleDTO getInmueble() {
+        return inmueble;
+    }
+    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+    
+    public void setId(String id) {
         this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
     
     public String getId() {
         return id;
     }
-
-    public void setId(String id) {
-        this.id = id;
+    
+    public Date getFecha() {
+        return fecha;
+    }
+    
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 }

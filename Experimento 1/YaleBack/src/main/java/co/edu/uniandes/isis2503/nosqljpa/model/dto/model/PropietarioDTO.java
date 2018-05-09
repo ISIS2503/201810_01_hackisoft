@@ -23,27 +23,41 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.model;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.*;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
 @XmlRootElement
 public class PropietarioDTO {
-    
     private String id;
-    
-    private String nombre;
+    private List<InmuebleDTO> inmuebles;
+    private String email;
+    private String password;
+    private String phone;
 
     public PropietarioDTO() {
     }
 
-    public PropietarioDTO(String id, String nombre) {
+    public PropietarioDTO(String id, String email, String password, String phone) {
         this.id = id;
-        this.nombre = nombre;
+        this.inmuebles = new ArrayList<>();
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
     }
 
+    public List<InmuebleDTO> getInmuebles() {
+        return inmuebles;
+    }
+
+    public void setInmuebles(List<InmuebleDTO> inmuebles) {
+        this.inmuebles = inmuebles;
+    }
+    
     public String getId() {
         return id;
     }
@@ -51,14 +65,42 @@ public class PropietarioDTO {
     public void setId(String id) {
         this.id = id;
     }
-
-    public String getNombre() {
-        return nombre;
+    
+    public String getEmail() {
+        return email;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setEmail(String email) {
+        this.email = email;
     }
     
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public void addInmueble(InmuebleDTO inmueble) {
+        inmuebles.add(inmueble);
+    }
+    
+    public InmuebleDTO deleteInmueble(String id) {
+        for (InmuebleDTO inmueble : inmuebles) {
+            if(inmueble.getId().equals(id)){
+                inmuebles.remove(inmueble);
+                return inmueble;
+            }
+        }
+        return null;
+    }
 }

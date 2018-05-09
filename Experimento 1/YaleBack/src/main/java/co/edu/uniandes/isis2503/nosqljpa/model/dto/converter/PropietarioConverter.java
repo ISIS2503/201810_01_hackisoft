@@ -23,6 +23,8 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.converter;
 
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IInmuebleConverter;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IPropietarioConverter;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.PropietarioDTO;
 import co.edu.uniandes.isis2503.nosqljpa.model.entity.PropietarioEntity;
 import java.util.ArrayList;
@@ -30,42 +32,55 @@ import java.util.List;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-public class PropietarioConverter {
-    
-    public static PropietarioConverter CONVERTER=new PropietarioConverter();
+public class PropietarioConverter implements IPropietarioConverter {
+
+    public static IPropietarioConverter CONVERTER = new PropietarioConverter();
+    public static IInmuebleConverter inmuebleConverter = new InmuebleConverter();
 
     public PropietarioConverter() {
     }
-    
+
+    @Override
     public PropietarioDTO entityToDto(PropietarioEntity entity) {
-        PropietarioDTO dto=new PropietarioDTO();
+        PropietarioDTO dto = new PropietarioDTO();
         dto.setId(entity.getId());
-        dto.setNombre(entity.getNombre());
+        dto.setInmuebles(inmuebleConverter.listEntitiesToListDTOs(entity.getInmuebles()));
+        dto.setEmail(entity.getEmail());
+        dto.setPassword(entity.getPassword());
+        dto.setPhone(entity.getPhone());
         return dto;
     }
-    
+
+    @Override
     public PropietarioEntity dtoToEntity(PropietarioDTO dto) {
-        PropietarioEntity entity=new PropietarioEntity();
+        PropietarioEntity entity = new PropietarioEntity();
         entity.setId(dto.getId());
-        entity.setNombre(dto.getNombre());
+        entity.setInmuebles(inmuebleConverter.listDTOsToListEntities(dto.getInmuebles()));
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(dto.getPassword());
+        entity.setPhone(dto.getPhone());
         return entity;
     }
-    
+
+    @Override
     public List<PropietarioDTO> listEntitiesToListDTOs(List<PropietarioEntity> entities) {
         ArrayList<PropietarioDTO> dtos = new ArrayList<>();
-        for (PropietarioEntity entity : entities) {
-            dtos.add(entityToDto(entity));
-        }
+        if (entities != null)
+            for (PropietarioEntity entity : entities) {
+                dtos.add(entityToDto(entity));
+            }
         return dtos;
     }
 
+    @Override
     public List<PropietarioEntity> listDTOsToListEntities(List<PropietarioDTO> dtos) {
         ArrayList<PropietarioEntity> entities = new ArrayList<>();
-        for (PropietarioDTO dto : dtos) {
-            entities.add(dtoToEntity(dto));
-        }
+        if (dtos != null)
+            for (PropietarioDTO dto : dtos) {
+                entities.add(dtoToEntity(dto));
+            }
         return entities;
     }
 }

@@ -23,6 +23,7 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.model.dto.converter;
 
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IDispositivoConverter;
 import co.edu.uniandes.isis2503.nosqljpa.interfaces.IHubConverter;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.HubDTO;
 import co.edu.uniandes.isis2503.nosqljpa.model.entity.HubEntity;
@@ -36,6 +37,7 @@ import java.util.List;
 public class HubConverter implements IHubConverter {
 
     public static IHubConverter CONVERTER = new HubConverter();
+    public static IDispositivoConverter dispositivoConverter = new DispositivoConverter();
 
     public HubConverter() {
     }
@@ -44,8 +46,7 @@ public class HubConverter implements IHubConverter {
     public HubDTO entityToDto(HubEntity entity) {
         HubDTO dto = new HubDTO();
         dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setCode(entity.getCode());
+        dto.setDispositivos(dispositivoConverter.listEntitiesToListDTOs(entity.getDispositivos()));
         return dto;
     }
 
@@ -53,26 +54,27 @@ public class HubConverter implements IHubConverter {
     public HubEntity dtoToEntity(HubDTO dto) {
         HubEntity entity = new HubEntity();
         entity.setId(dto.getId());
-        entity.setName(dto.getName());
-        entity.setCode(dto.getCode());
+        entity.setDispositivos(dispositivoConverter.listDTOsToListEntities(dto.getDispositivos()));
         return entity;
     }
 
     @Override
     public List<HubDTO> listEntitiesToListDTOs(List<HubEntity> entities) {
         ArrayList<HubDTO> dtos = new ArrayList<>();
-        for (HubEntity entity : entities) {
-            dtos.add(entityToDto(entity));
-        }
+        if (entities != null)
+            for (HubEntity entity : entities) {
+                dtos.add(entityToDto(entity));
+            }
         return dtos;
     }
 
     @Override
     public List<HubEntity> listDTOsToListEntities(List<HubDTO> dtos) {
         ArrayList<HubEntity> entities = new ArrayList<>();
-        for (HubDTO dto : dtos) {
-            entities.add(dtoToEntity(dto));
-        }
+        if (dtos != null)
+            for (HubDTO dto : dtos) {
+                entities.add(dtoToEntity(dto));
+            }
         return entities;
     }
 }

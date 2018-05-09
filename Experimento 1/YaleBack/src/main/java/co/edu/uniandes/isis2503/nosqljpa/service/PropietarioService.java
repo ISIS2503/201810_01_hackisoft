@@ -23,13 +23,18 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.service;
 
+import co.edu.uniandes.isis2503.nosqljpa.auth.AuthorizationFilter.Role;
+import co.edu.uniandes.isis2503.nosqljpa.auth.AuthenticationFilter;
 import co.edu.uniandes.isis2503.nosqljpa.auth.Secured;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IPropietarioLogic;
 import co.edu.uniandes.isis2503.nosqljpa.logic.PropietarioLogic;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.PropietarioDTO;
-import com.sun.istack.logging.Logger;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IInmuebleLogic;
+import co.edu.uniandes.isis2503.nosqljpa.logic.InmuebleLogic;
+import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.InmuebleDTO;
+import java.util.logging.Logger;
 import java.util.List;
 import java.util.logging.Level;
-import javax.management.relation.Role;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,62 +47,83 @@ import javax.ws.rs.core.Response;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-//@Path("/propietarios")
-//@Secured
 @Path("/propietarios")
-@Secured
+//@Secured({Role.yale, Role.propietario})
 @Produces(MediaType.APPLICATION_JSON)
 public class PropietarioService {
-    private final PropietarioLogic propLogic;
+
+    private final IPropietarioLogic propietarioLogic;
+    private final IInmuebleLogic inmuebleLogic;
 
     public PropietarioService() {
-        this.propLogic = new PropietarioLogic();
+        this.propietarioLogic = new PropietarioLogic();
+        this.inmuebleLogic = new InmuebleLogic();
+    }
+
+    @POST
+    public PropietarioDTO add(PropietarioDTO dto) {
+        return propietarioLogic.add(dto);
+    }
+
+    /**@POST
+    @Path("{code}/rooms")
+    public RoomDTO addRoom(@PathParam("code") String code, RoomDTO dto) {
+        PropietarioDTO propietario = propietarioLogic.findCode(code);
+        RoomDTO result = roomLogic.add(dto);
+        propietario.addRoom(dto.getId());
+        propietarioLogic.update(propietario);
+        return result;
+    }*/
+
+    @PUT
+    public PropietarioDTO update(PropietarioDTO dto) {
+        return propietarioLogic.update(dto);
     }
     
     @POST
-    //@Secured({Role.yale})
-    //@Secured({Role.yale})
-    public PropietarioDTO add(PropietarioDTO dto)
-    {
-        return propLogic.add(dto);
+    @Path("/inmueble")
+    //@Secured({Role.propietario})
+    public InmuebleDTO addInmueble(InmuebleDTO dto) {
+        PropietarioDTO propietario = propietarioLogic.find(AuthenticationFilter.USER_ID);
+        InmuebleDTO agregado = inmuebleLogic.add(dto);
+        propietario.addInmueble(dto);
+        propietarioLogic.update(propietario);
+        return agregado;
     }
     
-    @PUT
-    //@Secured()
-    public PropietarioDTO update(PropietarioDTO dto)
-    {
-        return propLogic.update(dto);
+    @POST
+    @Path("/{idPropietario}/inmueble")
+    //@Secured({Role.yale})
+    public InmuebleDTO addInmueble(@PathParam("idPropietario") String idPropietario, InmuebleDTO dto) {
+        PropietarioDTO propietario = propietarioLogic.find(idPropietario);
+        InmuebleDTO agregado = inmuebleLogic.add(dto);
+        propietario.addInmueble(dto);
+        propietarioLogic.update(propietario);
+        return agregado;
     }
-    
+
     @GET
     @Path("/{id}")
-    public PropietarioDTO find(@PathParam("id")String  id)
-    {
-       return propLogic.find(id);
+    public PropietarioDTO find(@PathParam("id") String id) {
+        return propietarioLogic.find(id);
     }
-    
+
     @GET
-    public List<PropietarioDTO> all()
-    {
-        return propLogic.all();
+    public List<PropietarioDTO> all() {
+        return propietarioLogic.all();
     }
-    
+
     @DELETE
     @Path("/{id}")
-    public Response delete(@PathParam("id") String id)
-    {
-        try
-        {
-            propLogic.delete(id);
-            return Response.status(200).header("Acces-Control_Allow-Origin","*").entity("Sucessful: Floor was deleted").build();
+    public Response delete(@PathParam("id") String id) {
+        try {
+            propietarioLogic.delete(id);
+            return Response.status(200).header("Access-Control-Allow-Origin", "*").entity("Sucessful: Propietario was deleted").build();
+        } catch (Exception e) {
+            Logger.getLogger(PropietarioService.class.getName()).log(Level.WARNING, e.getMessage());
+            return Response.status(500).header("Access-Control-Allow-Origin", "*").entity("We found errors in your query, please contact the Web Admin.").build();
         }
-        catch(Exception e)
-        {
-            Logger.getLogger(PropietarioService.class).log(Level.WARNING, e.getMessage());
-            return Response.status(500).header("Access-Control-Allow-Origin","*").entity("We found an eror in our querys, oplease contact the Web admin").build();
-        }
-        
-    } 
+    }
 }

@@ -23,6 +23,7 @@
  */
 package co.edu.uniandes.isis2503.nosqljpa.logic;
 
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IAdminLogic;
 import static co.edu.uniandes.isis2503.nosqljpa.model.dto.converter.AdminConverter.CONVERTER;
 import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.AdminDTO;
 import co.edu.uniandes.isis2503.nosqljpa.persistence.AdminPersistence;
@@ -31,44 +32,46 @@ import java.util.UUID;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-public class AdminLogic 
-{
+public class AdminLogic implements IAdminLogic{
+    private final AdminPersistence persistence;
 
-   
- private final AdminPersistence persistence;
- 
-     public AdminLogic() 
-     {
-         this.persistence= new AdminPersistence();
-     }
-   public AdminDTO add(AdminDTO dto) {
-        if (dto.getId() == null) {
-            //dto.setId(UUID.randomUUID().toString());
-            dto.setId(UUID.randomUUID().toString());
+    public AdminLogic() {
+        this.persistence = new AdminPersistence();
+    }
+
+    @Override
+    public AdminDTO add(AdminDTO dto) {
+        if(dto.getId()==null){
+           dto.setId(UUID.randomUUID().toString());
         }
         AdminDTO result = CONVERTER.entityToDto(persistence.add(CONVERTER.dtoToEntity(dto)));
         return result;
     }
 
+    @Override
     public AdminDTO update(AdminDTO dto) {
         AdminDTO result = CONVERTER.entityToDto(persistence.update(CONVERTER.dtoToEntity(dto)));
         return result;
     }
 
-    
-    public AdminDTO find(String id)
-    {
+    @Override
+    public AdminDTO find(String id) {
         return CONVERTER.entityToDto(persistence.find(id));
     }
     
-    public List<AdminDTO> all()
-    {
+    @Override
+    public AdminDTO findCode(String code) {
+        return CONVERTER.entityToDto(persistence.findCode(code));
+    }
+
+    @Override
+    public List<AdminDTO> all() {
         return CONVERTER.listEntitiesToListDTOs(persistence.all());
     }
-    
 
+    @Override
     public Boolean delete(String id) {
         return persistence.delete(id);
     }

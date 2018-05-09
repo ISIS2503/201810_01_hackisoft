@@ -27,45 +27,39 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
  * @author e.galan10
  */
 @Entity
-@Table(name = "HUB")
+@Table(name = "HUBS")
 public class HubEntity implements Serializable {
 
     @Id
     private String id;
     
-    private String name;
-    
-    private String code;
+    @OneToMany
+    private List<DispositivoEntity> dispositivos;
 
     public HubEntity() {
     }
 
-    public HubEntity(String id, String name, String code) {
+    public HubEntity(String id) {
         this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+        this.dispositivos = new ArrayList<>();
     }
     
-    public String getName() {
-        return name;
+    public List<DispositivoEntity> getDispositivos() {
+        return dispositivos;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDispositivos(List<DispositivoEntity> dispositivos) {
+        this.dispositivos = dispositivos;
     }
 
     public String getId() {
@@ -74,5 +68,19 @@ public class HubEntity implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public void addDispositivo(DispositivoEntity dispositivo) {
+        this.dispositivos.add(dispositivo);
+    }
+    
+    public DispositivoEntity deleteDispositivo(String id){
+        for (DispositivoEntity dispositivo : dispositivos) {
+            if(dispositivo.getId().equals(id)){
+                dispositivos.remove(dispositivo);
+                return dispositivo;
+            }
+        }
+        return null;
     }
 }

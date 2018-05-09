@@ -26,6 +26,7 @@ package co.edu.uniandes.isis2503.nosqljpa.model.entity;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -33,39 +34,33 @@ import javax.persistence.Table;
  * @author e.galan10
  */
 @Entity
-@Table(name = "INMUEBLE")
+@Table(name = "INMUEBLES")
 public class InmuebleEntity implements Serializable {
 
     @Id
     private String id;
     
-    private String name;
+    @OneToOne
+    private HubEntity hub;
     
-    private String code;
+    @OneToOne
+    private ResidenciaEntity residencia;
 
     public InmuebleEntity() {
     }
 
-    public InmuebleEntity(String id, String name, String code) {
+    public InmuebleEntity(String id, HubEntity hub, ResidenciaEntity residencia) {
         this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+        this.hub = hub;
+        this.residencia = residencia;
     }
     
-    public String getName() {
-        return name;
+    public HubEntity getHub() {
+        return hub;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setHub(HubEntity hub) {
+        this.hub = hub;
     }
 
     public String getId() {
@@ -74,6 +69,14 @@ public class InmuebleEntity implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public ResidenciaEntity getResidencia() {
+        return residencia;
+    }
+
+    public void setResidencia(ResidenciaEntity residencia) {
+        this.residencia = residencia;
     }
 
 }

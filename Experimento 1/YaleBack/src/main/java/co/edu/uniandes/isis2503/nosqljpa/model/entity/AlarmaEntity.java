@@ -24,48 +24,48 @@
 package co.edu.uniandes.isis2503.nosqljpa.model.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 
 /**
  *
  * @author e.galan10
  */
 @Entity
-@Table(name = "ALARMA")
+@Table(name = "ALARMAS")
 public class AlarmaEntity implements Serializable{
-
+    
     @Id
     private String id;
     
-    private String name;
+    private String message;
+    @OneToOne
+    private InmuebleEntity inmueble;
+    @OneToOne
+    private ResidenciaEntity residencia;
     
-    private String code;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date fecha;
 
     public AlarmaEntity() {
     }
 
-    public AlarmaEntity(String id, String name, String code) {
-        this.id = id;
-        this.name = name;
-        this.code = code;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    public AlarmaEntity(String message, ResidenciaEntity residencia, InmuebleEntity inmueble) {
+        this.residencia = residencia;
+        this.message = message;
+        this.inmueble = inmueble;
     }
     
-    public String getName() {
-        return name;
+    public String getMessage() {
+        return message;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getId() {
@@ -74,5 +74,29 @@ public class AlarmaEntity implements Serializable{
 
     public void setId(String id) {
         this.id = id;
+    }
+    
+    public ResidenciaEntity getResidencia(){
+        return residencia;
+    }
+    
+    public void setResidencia(ResidenciaEntity residencia){
+        this.residencia = residencia;
+    }
+    
+    public InmuebleEntity getInmueble(){
+        return inmueble;
+    }
+    
+    public void setInmueble(InmuebleEntity inmueble){
+        this.inmueble = inmueble;
+    }
+    
+    public Date getFecha() {
+        return fecha;
+    }
+    
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 }

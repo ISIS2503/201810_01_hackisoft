@@ -28,40 +28,51 @@ import co.edu.uniandes.isis2503.nosqljpa.model.dto.model.PropietarioDTO;
 import co.edu.uniandes.isis2503.nosqljpa.persistence.PropietarioPersistence;
 import java.util.List;
 import java.util.UUID;
+import co.edu.uniandes.isis2503.nosqljpa.interfaces.IPropietarioLogic;
 
 /**
  *
- * @author da.cortes11
+ * @author e.galan10
  */
-public class PropietarioLogic {
+public class PropietarioLogic implements IPropietarioLogic{
     private final PropietarioPersistence persistence;
 
     public PropietarioLogic() {
         this.persistence = new PropietarioPersistence();
     }
-    
+
+    @Override
     public PropietarioDTO add(PropietarioDTO dto) {
-        if (dto.getId() == null) {
-            dto.setId(UUID.randomUUID().toString());
+        if(dto.getId()==null){
+           dto.setId(UUID.randomUUID().toString());
         }
         PropietarioDTO result = CONVERTER.entityToDto(persistence.add(CONVERTER.dtoToEntity(dto)));
         return result;
     }
 
+    @Override
     public PropietarioDTO update(PropietarioDTO dto) {
         PropietarioDTO result = CONVERTER.entityToDto(persistence.update(CONVERTER.dtoToEntity(dto)));
         return result;
     }
 
+    @Override
     public PropietarioDTO find(String id) {
         return CONVERTER.entityToDto(persistence.find(id));
     }
+    
+    @Override
+    public PropietarioDTO findCode(String code) {
+        return CONVERTER.entityToDto(persistence.findCode(code));
+    }
 
+    @Override
     public List<PropietarioDTO> all() {
         return CONVERTER.listEntitiesToListDTOs(persistence.all());
     }
 
+    @Override
     public Boolean delete(String id) {
         return persistence.delete(id);
-   }
+    }
 }
