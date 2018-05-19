@@ -23,9 +23,9 @@ app.controller('control', function control($scope, $interval){
 			color: '#34B92C',
 			alerta: {},
 			info: {
-				propietario: 'El David',
+				propietario: 'David Cortés',
 				telefono: '52136945',
-				email: 'davidgal@uniandes.edu.co'
+				email: 'david@uniandes.edu.co'
 			}, 
 			historial: []
 		}, {
@@ -34,7 +34,7 @@ app.controller('control', function control($scope, $interval){
 			color: '#34B92C',
 			alerta: {},
 			info: {
-				propietario: 'El JuanK',
+				propietario: 'Juan Martha',
 				telefono: '84737483',
 				email: 'juank@uniandes.edu.co'
 			}, 
@@ -45,9 +45,9 @@ app.controller('control', function control($scope, $interval){
 			color: '#34B92C',
 			alerta: {},
 			info: {
-				propietario: 'La Rusa',
+				propietario: 'Andrés Florez',
 				telefono: '36473658',
-				email: 'larusa@uniandes.edu.co'
+				email: 'andresino@uniandes.edu.co'
 			}, 
 			historial: []
 		}, {
@@ -56,9 +56,9 @@ app.controller('control', function control($scope, $interval){
 			color: '#34B92C',
 			alerta: {},
 			info: {
-				propietario: 'Mamasita La profe',
+				propietario: 'Luisa Barahona',
 				telefono: '12345678',
-				email: 'laprofe@uniandes.edu.co'
+				email: 'luisita@uniandes.edu.co'
 			}, 
 			historial: []
 		}, {
@@ -67,9 +67,9 @@ app.controller('control', function control($scope, $interval){
 			color: '#34B92C',
 			alerta: {},
 			info: {
-				propietario: 'El Perrito',
+				propietario: 'Pedro Sanchez',
 				telefono: '545132545',
-				email: 'elperrito@uniandes.edu.co'
+				email: 'elpedrito@uniandes.edu.co'
 			}, 
 			historial: []
 		}
